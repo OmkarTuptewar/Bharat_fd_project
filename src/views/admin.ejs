@@ -4,9 +4,166 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel - Manage FAQs</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1, h2, h3 {
+            margin: 0;
+            padding: 10px 0;
+            color: #333;
+        }
+
+        h2, h3 {
+            border-bottom: 2px solid #28a745;
+            padding-bottom: 8px;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .language-selector {
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+
+        select {
+            padding: 8px;
+            margin-left: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #fff;
+        }
+
+        .faq-card, .add-faq-card {
+            background: #fff;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .faq-card h3 {
+            color: #28a745;
+        }
+
+        .faq-card p {
+            color: #555;
+            font-size: 14px;
+        }
+
+        .faq-card button, .add-faq-card button {
+            background-color: #28a745;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-size: 16px;
+        }
+
+        .faq-card button {
+            background-color: #dc3545;
+            margin-left: 10px;
+        }
+
+        .add-faq-card input, .add-faq-card textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .faq-card-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        @media (max-width: 768px) {
+            .faq-card-container {
+                flex-direction: column;
+            }
+
+            .add-faq-card {
+                max-width: 500px;
+                margin: 0 auto;
+            }
+
+            select {
+                width: 100%;
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Admin Panel - Manage FAQs</h1>
+
+        <!-- Language Switcher -->
+        <div class="language-selector">
+            <label for="language">Choose Language:</label>
+            <select id="language" onchange="changeLanguage(this.value)">
+                <option value="en">English</option>
+                <option value="es">Español</option>
+                <option value="fr">Français</option>
+            </select>
+        </div>
+
+        <!-- Add FAQ Form -->
+        <div class="add-faq-card">
+            <h2>Add New FAQ</h2>
+            <form action="/admin/add" method="POST">
+                <input type="text" name="question" placeholder="Enter Question" required>
+                <textarea name="answer" placeholder="Enter Answer" required></textarea>
+                <button type="submit">Add FAQ</button>
+            </form>
+        </div>
+
+        <!-- Display Existing FAQs -->
+        <h2>Existing FAQs</h2>
+        <div class="faq-card-container">
+            <% faqs.forEach(faq => { %>
+                <div class="faq-card en" style="display: block;">
+                    <h3><%= faq.question %></h3>
+                    <p><%= faq.answer %></p>
+                    <form action="/admin/delete/<%= faq._id %>" method="POST">
+                        <button type="submit">Delete</button>
+                    </form>
+                </div>
+
+                <div class="faq-card es" style="display: none;">
+                    <h3><%= faq.translations.es?.question || faq.question %></h3>
+                    <p><%= faq.translations.es?.answer || faq.answer %></p>
+                </div>
+
+                <div class="faq-card fr" style="display: none;">
+                    <h3><%= faq.translations.fr?.question || faq.question %></h3>
+                    <p><%= faq.translations.fr?.answer || faq.answer %></p>
+                </div>
+            <% }); %>
+        </div>
+    </div>
+
     <script>
         function changeLanguage(lang) {
-            document.querySelectorAll(".faq").forEach((faq) => {
+            document.querySelectorAll(".faq-card").forEach((faq) => {
                 faq.style.display = "none";
             });
             document.querySelectorAll("." + lang).forEach((faq) => {
@@ -14,63 +171,5 @@
             });
         }
     </script>
-</head>
-<body style="font-family: Arial, sans-serif; background-color: #f4f4f4; text-align: center; padding: 20px;">
-
-    <h1 style="color: #333;">Admin Panel - Manage FAQs</h1>
-
-    <!-- Language Switcher -->
-    <label for="language" style="font-weight: bold;">Choose Language:</label>
-    <select id="language" onchange="changeLanguage(this.value)" style="padding: 5px; margin-bottom: 20px;">
-        <option value="en">English</option>
-        <option value="es">Español</option>
-        <option value="fr">Français</option>
-    </select>
-
-    <!-- Add FAQ Form -->
-    <div style="max-width: 600px; margin: 20px auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);">
-        <h2 style="color: #444;">Add New FAQ</h2>
-        <form action="/admin/add" method="POST">
-            <input type="text" name="question" placeholder="Enter Question" required 
-                style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px;">
-            
-            <textarea name="answer" placeholder="Enter Answer" required 
-                style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;"></textarea>
-
-            <button type="submit" 
-                style="margin-top: 10px; padding: 10px 15px; background-color: #28a745; color: white; border: none; cursor: pointer; border-radius: 5px;">
-                Add FAQ
-            </button>
-        </form>
-    </div>
-
-    <!-- Display Existing FAQs -->
-    <h2 style="color: #444;">Existing FAQs</h2>
-    <div style="max-width: 800px; margin: auto;">
-        <% faqs.forEach(faq => { %>
-            <div class="faq en" style="display: block; background: white; padding: 15px; margin: 10px 0; border-radius: 10px; box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);">
-                <h3 style="color: #333;"><%= faq.question %></h3>
-                <p style="color: #555;"><%= faq.answer %></p>
-                
-                <form action="/admin/delete/<%= faq._id %>" method="POST">
-                    <button type="submit" 
-                        style="background-color: #dc3545; color: white; padding: 5px 10px; border: none; cursor: pointer; border-radius: 5px;">
-                        Delete
-                    </button>
-                </form>
-            </div>
-
-            <div class="faq es" style="display: none; background: white; padding: 15px; margin: 10px 0; border-radius: 10px; box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);">
-                <h3 style="color: #333;"><%= faq.translations.es?.question || faq.question %></h3>
-                <p style="color: #555;"><%= faq.translations.es?.answer || faq.answer %></p>
-            </div>
-
-            <div class="faq fr" style="display: none; background: white; padding: 15px; margin: 10px 0; border-radius: 10px; box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);">
-                <h3 style="color: #333;"><%= faq.translations.fr?.question || faq.question %></h3>
-                <p style="color: #555;"><%= faq.translations.fr?.answer || faq.answer %></p>
-            </div>
-        <% }); %>
-    </div>
-
 </body>
 </html>
