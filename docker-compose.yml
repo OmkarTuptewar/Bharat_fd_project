@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  backend:
+    build: .
+    container_name: faq-backend
+    ports:
+      - 5000:5000
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/faq-db
+      - REDIS_URL=redis://redis:6380
+    depends_on:
+      - mongo
+      - redis
+
+  mongo:
+    image: mongo:latest
+    container_name: faq-mongo
+    volumes:
+      - faq-db:/data/db
+
+  redis:
+    image: redis:latest
+    container_name: faq-redis
+
+volumes:
+  faq-db:
