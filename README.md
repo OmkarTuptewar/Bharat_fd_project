@@ -37,7 +37,11 @@ Edit
 npm start
 This will start the server on http://localhost:5000.
 
+
+![image](https://github.com/user-attachments/assets/c651e8ad-abb5-4580-a692-19a2ec8659a6)
+
 🚀 Running the Application
+
 Open http://localhost:5000/admin in your browser.
 Use the "Add New FAQ" form to create FAQs.
 View and manage FAQs in English, Spanish, or French.
